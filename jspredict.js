@@ -91,8 +91,15 @@
 
   var _jspredict = {
     observe: function(tle, qth, start) {
-      var tles = tle.split('\n');
-      var satrec = satellite.twoline2satrec(tles[1], tles[2]);
+      var satrec = null;
+
+      if(typeof tle === "string") {
+        var tles = tle.split('\n');
+        satrec = satellite.twoline2satrec(tles[1], tles[2]);
+      }
+      else {
+        satrec = satellite.json2satrec(tle);
+      }
 
       if (this._badSat(satrec, qth, start)) {
         return null;

@@ -1,4 +1,5 @@
 {
+  "private": true,
   "name": "jspredict",
   "version": "1.2.0",
   "description": "javascript port of predict open-source satellite tracking library",
@@ -31,6 +32,6 @@
   "homepage": "https://github.com/nsat/jspredict",
   "dependencies": {
     "moment": "^2.24.0",
-    "satellite.js": "^3.0.1"
+    "satellite.js": "itsonlyluis/satellite-js#develop"
   }
 }
