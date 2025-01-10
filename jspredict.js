@@ -279,18 +279,31 @@
         return null;
       }
 
+      transit.aos = {
+        azimuth: observed.azimuth,
+        elevation: observed.elevation,
+        time: daynum
+      }
+
       var iel = Math.round(observed.elevation);
 
       var maxEl = 0, apexAz = 0, minAz = 360, maxAz = 0;
 
       while (iel >= 0 && iterations < max_iterations && (!end || daynum < end)) {
         lastel = iel;
-        daynum = daynum + ms2day * Math.cos((observed.elevation-1.0)*deg2rad)*Math.sqrt(observed.altitude)/25000.0;
+        // daynum = daynum + ms2day * Math.cos((observed.elevation-1.0)*deg2rad)*Math.sqrt(observed.altitude)/25000.0;
+        daynum += 1000; // MARK: Modified step size
         observed = this._observe(satrec, qth, daynum);
         iel = Math.round(observed.elevation);
         if (maxEl < observed.elevation) {
           maxEl = observed.elevation;
           apexAz = observed.azimuth;
+
+          transit.tca = {
+            azimuth: observed.azimuth,
+            elevation: observed.elevation,
+            time: daynum,
+          }
         }
         maxAz = Math.max(maxAz, observed.azimuth);
         minAz = Math.min(minAz, observed.azimuth);
@@ -298,6 +311,12 @@
       }
       if (lastel !== 0) {
         daynum = this._findLOS(satrec, qth, daynum);
+      }
+
+      transit.los = {
+        azimuth: observed.azimuth,
+        elevation: observed.elevation,
+        time: daynum
       }
 
       transit.end = daynum;
@@ -349,7 +368,8 @@
       var satepoch = m_moment.utc(satrec.epochyr, "YY").add(satrec.epochdays, 'days').valueOf();
 
       var meanmo = satrec.no * 24 * 60 / (2 * Math.PI); // convert rad/min to rev/day
-      var drag = satrec.ndot * 24 * 60 * 24 * 60 / (2 * Math.PI); // convert rev/day^2
+      var drag = satrec.ndot;// * 24 * 60 * 24 * 60 / (2 * Math.PI); // convert rev/day^2
+        // Luis's note: I *think* this is wrong as ndot should already be in rev/day^2, but I'm still experimenting with it so not 100% confident in that yet   
 
       if (satepoch + ms2day * ((16.666666-meanmo)/(10.0*Math.abs(drag))) < start) {
         return true
