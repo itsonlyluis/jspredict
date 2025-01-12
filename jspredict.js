@@ -254,6 +254,7 @@
         track.elevation = lookAngles.elevation / deg2rad;
         track.rangeSat = lookAngles.rangeSat;
         track.doppler = doppler;
+        track.time = start.valueOf();
       }
 
       return track
